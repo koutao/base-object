@@ -1,6 +1,9 @@
 package com.koutao.baseobject.controller;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.koutao.baseobject.config.model.ResultModel;
 import com.koutao.baseobject.entity.Dept;
 import com.koutao.baseobject.service.DeptService;
@@ -42,8 +45,11 @@ public class HelloWorld {
     }
 
     @GetMapping("/list")
-    public List<Dept> listDetp(){
-        return deptService.selectList(null);
+    public Page<Dept> listDetp(){
+        Page<Dept> page = new Page<>(1, 3);
+        Wrapper<Dept> condition = new EntityWrapper<>();
+        condition.eq("dname", "研发部");
+        return deptService.selectPage(page, condition);
     }
 
 

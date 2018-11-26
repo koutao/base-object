@@ -4,13 +4,16 @@ import com.koutao.baseobject.config.model.ResultModel;
 import com.koutao.baseobject.util.JacksonUtil;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+import springfox.documentation.swagger.web.SwaggerResource;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestControllerAdvice
@@ -18,8 +21,9 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object>{
 
     @Override
     public boolean supports(MethodParameter var1, Class<? extends HttpMessageConverter<?>> var2){
-        final String returnTypeName = var1.getParameterType().getTypeName();
-        return !Objects.equals(ResultModel.class.getTypeName(), returnTypeName);
+        /*final String returnTypeName = var1.getParameterType().getTypeName();
+        return !Objects.equals(ResultModel.class.getTypeName(), returnTypeName);*/
+        return true;
     }
 
     @Override
@@ -35,10 +39,22 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object>{
             return new ResultModel();
         }
 
-        if (Objects.equals(ResultModel.class.getTypeName(), returnTypeName)){
+        if (Objects.equals(ResultModel.class.getTypeName(), returnTypeName)
+                || Objects.equals(ResponseEntity.class.getTypeName(), returnTypeName)){
             return var1;
         }
-
+        if (!var3.includes(MediaType.APPLICATION_JSON)) {
+            return var1;
+        }
+        /*if (var1 instanceof List){
+            List<Object> list = (List<Object>) var1;
+            if (!list.isEmpty()) {
+                if (list.get(0) instanceof SwaggerResource){
+                    return var1;
+                }
+            }
+        }
+*/
         return new ResultModel<>(var1);
     }
 
