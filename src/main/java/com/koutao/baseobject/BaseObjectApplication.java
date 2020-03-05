@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.koutao.baseobject.dao*")
+@MapperScan("com.koutao.baseobject.modules.*.dao*")
 public class BaseObjectApplication {
 
 	public static void main(String[] args) {

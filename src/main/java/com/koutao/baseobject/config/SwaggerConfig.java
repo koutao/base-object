@@ -1,52 +1,52 @@
 package com.koutao.baseobject.config;
 
+import com.koutao.baseobject.modules.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+
 @Configuration
 @EnableSwagger2
+@EnableSwaggerBootstrapUI
 public class SwaggerConfig {
 
-    /**
-     * UI页面显示信息
-     */
-    private final String SWAGGER2_API_BASEPACKAGE = "com.koutao.baseobject.controller";
-    private final String SWAGGER2_API_TITLE = "ms-API";
-    private final String SWAGGER2_API_DESCRIPTION = "";
-    private final String SWAGGER2_API_CONTACT = "0000";
-    private final String SWAGGER2_API_VERSION = "1.0";
-    /**
-     * createRestApi
-     *
-     * @return
-     */
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(SWAGGER2_API_BASEPACKAGE))
+                //加了ApiOperation注解的类，才生成接口文档
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .securitySchemes(security());
     }
-    /**
-     * apiInfo
-     * @return
-     */
+
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title(SWAGGER2_API_TITLE)
-                .description(SWAGGER2_API_DESCRIPTION)
-                .contact(SWAGGER2_API_CONTACT)
-                .version(SWAGGER2_API_VERSION)
+                .title("微同")
+                .description("微同接口文档")
+                .version("1.0.0")
+                .contact(new Contact("微同", "https://fly2you.cn/my/u/1", "939961241@qq.com"))
                 .build();
     }
 
+    private List<ApiKey> security() {
+        return newArrayList(
+                new ApiKey("token", "token", "header")
+        );
+    }
 }
